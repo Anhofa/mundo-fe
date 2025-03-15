@@ -41,7 +41,7 @@ const Header: React.FC = () => {
                     创作者中心
                 </div>
             </div>
-            <div className="avatar"></div>
+            <div className="avatar" onClick={()=>navigate("/info")}></div>
         </div>
     );
 };
