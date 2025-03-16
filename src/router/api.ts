@@ -4,12 +4,12 @@ import axios from "axios";
 const loginURL = "https://auth.altar-echo.top/api";
 
 const api = axios.create({
-  baseURL: "http://116.198.207.159:12349/api",
-  // baseURL: "https://auth.altar-echo.top/api",
+  // baseURL: "http://116.198.207.159:12349/api",
+  baseURL: "https://auth.altar-echo.top/api",
 
   headers: {
     "Content-Type": "application/json",
-    Authorization:
+    Authorization: 
       "Bearer " +
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMywidXNlcm5hbWUiOiJlZGRpZXd1NDFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpc3MiOiJtdW5kby1hdXRoLWh1YiIsImV4cCI6MTc0MTE3OTc3NCwiaWF0IjoxNzQwNTc0OTc0fQ.mSRVVd5X0ZlS_sWLheFZ907xS-zYjwfom5aGgOKJ4Jo", // 登录所需token
   },
@@ -194,6 +194,65 @@ export const getFriendsList = async (token: string) => {
     throw error;
   }
 }
+
+// 查看头像
+export const getAvatar = async (token: string): Promise<Blob | null> => {
+  try {
+    const response = await api.get("/avatar", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      responseType: "blob",
+    });
+
+    return response.data; 
+  } catch (error: any) {
+    if (error.response && error.response.status === 500) {
+      console.error("用户没有头像，使用默认头像");
+      return null; 
+    }
+    console.error("获取头像失败：", error);
+    throw error;
+  }
+};
+
+
+//生成头像
+export const generateAvatar = async (token: string) => {
+  try {
+    const response = await api.get(
+      "/avatar/generate",
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        }
+      });
+    return response.data;
+  } catch (error) {
+    console.error("获取头像失败：", error);
+    throw error;
+ }
+}
+
+// 更新头像
+export const updateAvatar = async (token: string, avatar: File) => {
+  try {
+    const response = await api.post(
+      "/avatar/upload",
+      {
+        avatar,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        }
+      });
+    return response.data;
+  } catch (error) {
+    console.error("更新头像失败：", error);
+  }
+}
+
 
 export const getTasks = async () => {
   const response = await api.get("/tasks");
